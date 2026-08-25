@@ -56,13 +56,18 @@ If you want to learn more about the underlying AWS services and architectural pa
 
 ---
 
+## 👤 Author & Acknowledgments
+Author: Monjok Terem
+
+Acknowledgments: Built as part of the AWS AI/ML / Future Agent Engineer program curriculum[cite: 1].
+
+
 ## 🧹 Cleanup
 To avoid ongoing cloud resource charges, the deployed CloudFormation stacks can be safely removed using the AWS CLI:
 ```bash
 aws cloudformation delete-stack --stack-name bug-report-tool-stack --region us-east-1
 aws cloudformation delete-stack --stack-name bug-report-testing-stack --region us-east-1
 
-👤 Author & Acknowledgments
-Author: Monjok Terem
 
-Acknowledgments: Built as part of the AWS AI/ML / Future Agent Engineer program curriculum[cite: 1].
+
+
