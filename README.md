@@ -1,111 +1,68 @@
-# Customer Support Chatbot with Amazon Bedrock Flows
+# Smart Customer Support Chatbot with Amazon Bedrock
 
-In this project you will build a customer support chatbot using Amazon Bedrock Flows. The chatbot will handle customers' questions on a fictional website, and will need to handle one of the following types of messages:
-* bug reports
-* platform related questions that can be answered from FAQ.
+An automated customer service system built as part of the **AWS AI/ML / Future Agent Engineer** program. This project orchestrates an intelligent customer support workflow that handles standard FAQs, routes general requests, and automatically logs customer bug reports into a secure database using serverless tools.
 
-There are a number of resources that will be available to you to develop this application:
+## 🚀 What It Does
+* **Answers FAQs:** Instantly responds to customer questions about shipping, orders, returns, and payments using embedded product documentation.
+* **Logs Bug Reports:** Automatically captures technical issues, extracts necessary details (like description, steps to reproduce, and environment), and saves them as tickets in a cloud database via AWS Lambda[cite: 1].
+* **Smart Routing:** Directs user messages down the correct processing path using Amazon Bedrock conditional logic nodes.
 
-* `create_bug_report` - a tool that can create a ticket in a database
-* `online_shop_faq.md` - a fictional FAQ that your application should use to respond to customer requests
+---
 
-You would need to create a Bedrock Flow application, and then test it in various scenarios.
+## 📋 Project Overview & Resources Provided
+To complete this challenge, the following core assets and setup files were utilized:
+* `create_bug_report` - A custom backend tool built to store support tickets[cite: 1].
+* `online_shop_faq.md` - The reference FAQ document used by the chatbot to answer user inquiries[cite: 1].
 
-## Getting Started
-
-### Dependencies
-
-- An AWS account with Amazon Bedrock access enabled.
-- AWS CLI configured with appropriate credentials.
-- Python 3.9+ with `boto3` installed.
-- Access to an Amazon Bedrock model (the solution uses Amazon Nova models, but you can use any supported model).
-
-### Project Files
-
-| File | Description |
+### Project Files Layout
+| File / Folder | Description |
 |------|-------------|
-| `docs/tools-setup.md` | Step-by-step guide for creating the bug report tool. |
-| `docs/testing.md` | Step-by-step guide for automated testing and running Bedrock Evaluations. |
-| `solution/` | Reference solution with the complete flow definition, test prompts, and a diagram. |
-| `cloudformation-tool.yaml` | A template for creating a tool you would need for this application. |
-| `cloudformation-testing.yaml` | A template for creating resources to test your final application. |
-| `create_bug_report.py` | Lambda function that implements a tool that stores bug reports in DynamoDB. |
-| `generate-eval-dataset.py` | Script that runs your flow against a test suite and produces a JSONL file for Bedrock Evaluations. |
-| `flow-tests-template.json` | Template for developing your test suite. |
+| `docs/tools-setup.md` | Step-by-step walkthrough for deploying the bug report tool and database[cite: 1]. |
+| `docs/testing.md` | Guide for running automated test suites and Bedrock evaluations[cite: 1]. |
+| `cloudformation-tool.yaml` | Infrastructure template used to spin up the bug-reporting Lambda function and DynamoDB table[cite: 1]. |
+| `cloudformation-testing.yaml` | Template used to deploy testing resources[cite: 1]. |
+| `lambda/create_bug_report.py` | Python script handling ticket storage logic in Amazon DynamoDB[cite: 1]. |
+| `evaluation/` | Test datasets (`.jsonl`) and automated evaluation output metrics[cite: 1]. |
+| `evidence/` | Verification screenshots confirming successful database writes and routing paths[cite: 1]. |
 
-## Project Instructions
+---
 
-### Step 1: Create Resources for your application
+## 🛠️ Technologies Used
+* **Amazon Bedrock Flows & Agents:** Orchestrates the multi-branch chat logic, prompt nodes, and automated tool use.
+* **AWS Lambda (Python):** Serverless backend integration that processes and saves bug tickets[cite: 1].
+* **Amazon DynamoDB:** Secure NoSQL database storing customer support and bug tickets[cite: 1].
+* **Amazon Bedrock Evaluations:** Automated "LLM-as-a-judge" evaluation framework used to measure chatbot accuracy and response quality.
 
-First you will deploy a tool that your application will need to create bug reports and other related resources.
+---
 
-When a customer reports a bug, the chatbot needs to persist it somewhere so the engineering team can follow up. In this project we use a DynamoDB table as a simple ticket store, and a Lambda function as the tool that Bedrock Agents can call to create a new ticket.
+## 📊 Testing & Verification
+The system was rigorously tested across multiple functional branches (FAQs, bug submissions, and general fallback routing) to ensure high reliability and low latency. 
 
-Follow the detailed walkthrough in [Tools Setup](docs/tools-setup.md), to ensure that you have everything you need for the rest of the project
+### Key Verification Highlights:
+* **Bug Saved in Database:** `evidence/04-dynamodb-bug-report-item.png`[cite: 1]
+* **FAQ Path Test Coverage:** `evidence/07-flow-test-uncovered-faq.png`[cite: 1]
+* **General Request Routing:** `evidence/08-flow-test-other-request.png`[cite: 1]
+* **Final Chat Transcript:** `evidence/10-bug-report-chat-transcript-final.png`[cite: 1]
 
-### Step 2: Build the Bedrock Flow
+---
 
-Now having a tool set up, you can start developing Bedrock Flow application. Your application would need to handle three different types of requests:
+## 📚 Official AWS References & Guides
+If you want to learn more about the underlying AWS services and architectural patterns used in this project, check out these official resources:
+* [Amazon Bedrock Flows Documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/flows.html) – Learn how to build multi-step conversational workflows[cite: 1].
+* [Amazon Bedrock Agents Guide](https://docs.aws.amazon.com/bedrock/latest/userguide/agents.html) – Discover how foundation models safely invoke external tools and APIs[cite: 1].
+* [Amazon Bedrock Model Evaluation](https://docs.aws.amazon.com/bedrock/latest/userguide/evaluation.html) – Read up on automated and human-in-the-loop evaluation metrics[cite: 1].
+* [AWS Lambda Developer Guide](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html) – Explore serverless function development with Python[cite: 1].
+* [Amazon DynamoDB Getting Started](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) – Learn NoSQL table design and management[cite: 1].
 
-- **Bug reports** - if a customer reports a bug on the web site. In this case, the application would need to collect additional information and create a ticket for the reported bug using the tool you've created in the previous step.
-- **Platform questions** - the application should answer common questions about orders, shipping, returns, and payments using an FAQ.
-- **Other requests** - in case if the question cannot be answered using FAQ and not a bug report, and application should politely redirected to a human support phone line.
+---
 
-The tool you've deployed accepts three parameters:
-
-* Bug description
-* Steps to reproduce
-* Environment where a user has experienced a bug
-
-Make sure that your application collects this data when creating a bug report.
-
-Platform questions (orders, shipping, returns, payments) need to be answered from the product's FAQ. Here we will use the simplest approach and embed the document directly in the prompt — the model will see it at inference time and answers from it.
-
-> **Note:** Embedding documents in the prompt works well for short, stable content like a FAQ. For large documents, embedding the full text in every prompt becomes expensive and hits context limits. The standard solution is **Retrieval-Augmented Generation (RAG)**, which retrieves only the relevant passages at query time using a vector index. RAG with Amazon Bedrock Knowledge Bases is outside the scope of this course.
-
-#### Some suggestions
-
-Here are some things to keep in mind when working on your application:
-
-* Condition nodes in Bedrock Flows use exact string matching, so the classification output needs to be predictable.
-* You can use an agent node to collect more information about a bug if initial request is unclear or incomplete. To allow an agent to ask additional questions you need to enable "User input" option in "Advanced settings".
-* A single Output node can't receive connections from multiple branches. You need a separate Output node for each path.
-* For platform questions, embed your FAQ directly in the prompt.
-* Don't forget to deploy resources once you change them. For example you need to prepare agents if you change them.
-* Try to implement and test your solution step by step.
-* Use us-east-1 region, as some smaller regions might not have all Bedrock features.
-
-## Step 3: Testing
-
-Once you have your Bedrock Flow application you can test it manually using the chat interface in Bedrock Flows. However, this approach is too tedious and not scalable. Ideally we want to have an automated way to test your application.
-
-To test your application you will do the following:
-
-* Create a set of test prompts and define expected results
-* Run your application programmatically on this set of prompts
-* Use Bedrock Evaluations to evaluate your application's outputs
-
-You need to follow the steps in the [Testing and Evaluation](docs/testing.md) document to run automated tests and evaluate your flow.
-
-## Cleanup
-
-When you are done with the project, delete the CloudFormation stacks to avoid ongoing charges:
-
+## 🧹 Cleanup
+To avoid ongoing cloud resource charges, the deployed CloudFormation stacks can be safely removed using the AWS CLI:
 ```bash
 aws cloudformation delete-stack --stack-name bug-report-tool-stack --region us-east-1
 aws cloudformation delete-stack --stack-name bug-report-testing-stack --region us-east-1
-```
 
-This removes the Lambda function, DynamoDB table, IAM roles, and S3 bucket created during the project.
+👤 Author & Acknowledgments
+Author: Monjok Terem
 
-## Built With
-
-* [Amazon Bedrock Flows](https://docs.aws.amazon.com/bedrock/latest/userguide/flows.html) - Orchestration of the LLM application
-* [Amazon Bedrock Agents](https://docs.aws.amazon.com/bedrock/latest/userguide/agents.html) - Tool use for bug report creation
-* [Amazon Bedrock Evaluations](https://docs.aws.amazon.com/bedrock/latest/userguide/evaluation.html) - LLM-as-a-judge evaluation
-* [AWS Lambda](https://aws.amazon.com/lambda/) - Bug report tool runtime
-* [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) - Bug report storage
-
-## License
-
-[License](../LICENSE.md)
+Acknowledgments: Built as part of the AWS AI/ML / Future Agent Engineer program curriculum[cite: 1].
